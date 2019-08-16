@@ -7,7 +7,6 @@ import com.demo.studentmanagement.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class StudentController {
   @Autowired StudentService studentService;
 
   @GetMapping("/{id}")
-  public ResponseEntity<StudentWebResponse> getStudent(@PathVariable("id") Long id) {
+  public ResponseEntity<StudentWebResponse> getStudentDetails(@PathVariable("id") Long id) {
     LOGGER.debug("Inside getStudent Method");
     StudentServiceResponse studentServiceResponse = studentService.getStudentDetails(id);
     return new ResponseEntity<>(
