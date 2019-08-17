@@ -1,6 +1,6 @@
 package com.demo.studentmanagement.service;
 
-import com.demo.studentmanagement.dao.StudentDAO;
+import com.demo.studentmanagement.repo.StudentRepo;
 import com.demo.studentmanagement.helper.StudentMapper;
 import com.demo.studentmanagement.model.StudentEntity;
 import com.demo.studentmanagement.model.StudentRequest;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class StudentServiceImplTest {
 
   @Mock
-  private StudentDAO studentDAO;
+  private StudentRepo studentDAO;
 
   @InjectMocks
   private StudentServiceImpl studentService;

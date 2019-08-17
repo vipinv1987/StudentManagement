@@ -1,6 +1,6 @@
 package com.demo.studentmanagement.service;
 
-import com.demo.studentmanagement.dao.StudentDAO;
+import com.demo.studentmanagement.repo.StudentRepo;
 import com.demo.studentmanagement.exception.StudentNotFoundException;
 import com.demo.studentmanagement.helper.StudentMapper;
 import com.demo.studentmanagement.model.StudentEntity;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-  @Autowired private StudentDAO studentDAO;
+  @Autowired private StudentRepo studentDAO;
 
   @Autowired private StudentMapper studentMapper;
 

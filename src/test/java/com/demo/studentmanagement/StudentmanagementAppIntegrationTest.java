@@ -1,6 +1,6 @@
 package com.demo.studentmanagement;
 
-import com.demo.studentmanagement.dao.StudentDAO;
+import com.demo.studentmanagement.repo.StudentRepo;
 import com.demo.studentmanagement.model.StudentEntity;
 import com.demo.studentmanagement.model.StudentRequest;
 import org.junit.Assert;
@@ -26,7 +26,7 @@ public class StudentmanagementAppIntegrationTest {
 
   @LocalServerPort private int port;
 
-  @MockBean private StudentDAO studentDAO;
+  @MockBean private StudentRepo studentDAO;
 
   private Optional<StudentEntity> student;
 
