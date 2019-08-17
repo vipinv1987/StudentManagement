@@ -12,23 +12,26 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StudentServiceImplTest {
 
   @Mock
-  StudentDAO studentDAO;
+  private StudentDAO studentDAO;
 
   @InjectMocks
-  StudentServiceImpl studentService;
+  private StudentServiceImpl studentService;
 
   @InjectMocks
-  StudentMapper studentMapper;
+  private StudentMapper studentMapper;
 
-  Optional<StudentEntity> student;
+  private Optional<StudentEntity> student;
 
-  StudentEntity studentEntity;
+  private StudentEntity studentEntity;
 
   @Before
   public void init() {
@@ -56,6 +59,13 @@ public class StudentServiceImplTest {
   public void createOrUpdateStudentTestForCreate() {
     whenForCreateOrUpdateTest(Optional.empty());
     studentService.createOrUpdateStudent(createUpdateStudentRequest());
+  }
+
+  @Test
+  public void deleteStudentByIdTest() {
+    when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
+    doNothing().when(studentDAO).deleteById(any(Long.class));
+    studentService.deleteStudentById(1L);
   }
 
   private Optional<StudentEntity> createStudentEnity() {
