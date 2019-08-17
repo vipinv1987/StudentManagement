@@ -17,7 +17,7 @@ public class StudentController {
 
   private final Logger LOGGER = LoggerFactory.getLogger(StudentController.class);
 
-  @Autowired StudentService studentService;
+  @Autowired private StudentService studentService;
 
   @GetMapping("/{id}")
   public ResponseEntity<StudentWebResponse> getStudentDetails(@PathVariable("id") Long id) {
@@ -32,16 +32,18 @@ public class StudentController {
         HttpStatus.OK);
   }
 
-  @PostMapping(path = "/createOrUpdate", consumes = "application/json", produces = "application/json")
+  @PostMapping(
+      path = "/createOrUpdate",
+      consumes = "application/json",
+      produces = "application/json")
   public HttpStatus createOrUpdateStudent(@RequestBody StudentRequest studentRequest) {
     studentService.createOrUpdateStudent(studentRequest);
     return HttpStatus.OK;
   }
 
   @DeleteMapping("/{id}")
-  public HttpStatus deleteStudentById(@PathVariable("id") Long id)
-           {
-             studentService.deleteStudentById(id);
+  public HttpStatus deleteStudentById(@PathVariable("id") Long id) {
+    studentService.deleteStudentById(id);
     return HttpStatus.OK;
   }
 }

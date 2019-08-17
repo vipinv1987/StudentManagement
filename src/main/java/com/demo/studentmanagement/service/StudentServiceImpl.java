@@ -15,10 +15,10 @@ import java.util.Optional;
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
-    StudentDAO studentDAO;
+    private StudentDAO studentDAO;
 
     @Autowired
-    StudentMapper studentMapper;
+    private StudentMapper studentMapper;
 
     @Override
     public StudentServiceResponse getStudentDetails(Long studentId) {
