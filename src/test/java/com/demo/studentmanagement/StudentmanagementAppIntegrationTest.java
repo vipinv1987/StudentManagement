@@ -53,14 +53,14 @@ public class StudentmanagementAppIntegrationTest {
   }
 
   @Test
-  public void testCreateOrUpdateStudent() throws Exception {
+  public void testCreateStudent() throws Exception {
     when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
     when(studentDAO.save(any(StudentEntity.class))).thenReturn(updateStudentEntity());
     HttpEntity<StudentRequest> entity =
         new HttpEntity<StudentRequest>(createStudentRequest(), headers);
     ResponseEntity<String> response =
         restTemplate.exchange(
-            createURLWithPort("/students/createOrUpdate"), HttpMethod.POST, entity, String.class);
+            createURLWithPort("/students/create"), HttpMethod.POST, entity, String.class);
     Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 

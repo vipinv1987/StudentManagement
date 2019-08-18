@@ -33,11 +33,20 @@ public class StudentController {
   }
 
   @PostMapping(
-      path = "/createOrUpdate",
+      path = "/create",
       consumes = "application/json",
       produces = "application/json")
-  public HttpStatus createOrUpdateStudent(@RequestBody StudentRequest studentRequest) {
-    studentService.createOrUpdateStudent(studentRequest);
+  public HttpStatus createStudent(@RequestBody StudentRequest studentRequest) {
+    studentService.createStudent(studentRequest);
+    return HttpStatus.OK;
+  }
+
+  @PostMapping(
+          path = "/update",
+          consumes = "application/json",
+          produces = "application/json")
+  public HttpStatus updateStudent(@RequestBody StudentRequest studentRequest) {
+    studentService.updateStudent(studentRequest);
     return HttpStatus.OK;
   }
 

@@ -45,9 +45,9 @@ public class StudentServiceImplTest {
   }
 
   @Test
-  public void createOrUpdateStudentTestForUpdate() {
-    whenForCreateOrUpdateTest(createStudentEnity());
-    studentService.createOrUpdateStudent(createUpdateStudentRequest());
+  public void createStudentTest() {
+    when(studentDAO.save(any(StudentEntity.class))).thenReturn(updateStudentEntity());
+    studentService.createStudent(createUpdateStudentRequest());
   }
 
   public void whenForCreateOrUpdateTest(Optional<StudentEntity> studentEnity) {
@@ -56,9 +56,10 @@ public class StudentServiceImplTest {
   }
 
   @Test
-  public void createOrUpdateStudentTestForCreate() {
-    whenForCreateOrUpdateTest(Optional.empty());
-    studentService.createOrUpdateStudent(createUpdateStudentRequest());
+  public void updateStudentTest() {
+    when(studentDAO.findById(any(Long.class))).thenReturn(createStudentEnity());
+    when(studentDAO.save(studentEntity)).thenReturn(updateStudentEntity());
+    studentService.updateStudent(createUpdateStudentRequest());
   }
 
   @Test

@@ -34,7 +34,27 @@ public class StudentServiceImpl implements StudentService {
   }
 
   @Override
-  public void createOrUpdateStudent(StudentRequest studentRequest) {
+  public void createStudent(StudentRequest studentRequest) {
+    StudentEntity studentEntity = new StudentEntity();
+    createStudentEntity(studentRequest, studentEntity);
+    studentDAO.save(studentEntity);
+  }
+
+  @Override
+  public void updateStudent(StudentRequest studentRequest) {
+    studentDAO
+        .findById(studentRequest.getStudentId())
+        .map(
+            studentEntity -> {
+              createStudentEntity(studentRequest, studentEntity);
+              studentDAO.save(studentEntity);
+              return studentEntity;
+            })
+        .orElseThrow(
+            () ->
+                new StudentNotFoundException(
+                    "StudentId " + studentRequest.getStudentId() + " Not Found"));
+
     Optional<StudentEntity> student = studentDAO.findById(studentRequest.getStudentId());
     if (student.isPresent()) {
       StudentEntity studentEntity = student.get();
@@ -45,12 +65,23 @@ public class StudentServiceImpl implements StudentService {
     }
   }
 
+  private void createStudentEntity(StudentRequest studentRequest, StudentEntity studentEntity) {
+    studentEntity.setFirstName(studentRequest.getFirstName());
+    studentEntity.setLastName(studentRequest.getLastName());
+    studentEntity.setEmail(studentRequest.getEmailadress());
+    studentEntity.setStandard(studentRequest.getStandard());
+  }
+
   @Override
   public void deleteStudentById(Long studentId) {
-     studentDAO.findById(studentId).map(studentEntity -> {
-       studentDAO.delete(studentEntity);
-       return studentEntity;
-    }).orElseThrow(()->new StudentNotFoundException("StudentId " + studentId + " Not Found"));
+    studentDAO
+        .findById(studentId)
+        .map(
+            studentEntity -> {
+              studentDAO.delete(studentEntity);
+              return studentEntity;
+            })
+        .orElseThrow(() -> new StudentNotFoundException("StudentId " + studentId + " Not Found"));
   }
 
   private void studentSaveOrUpdate(StudentRequest studentRequest, StudentEntity studentEntity) {
