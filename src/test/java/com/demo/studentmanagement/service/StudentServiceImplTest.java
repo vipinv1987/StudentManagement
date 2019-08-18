@@ -64,7 +64,7 @@ public class StudentServiceImplTest {
   @Test
   public void deleteStudentByIdTest() {
     when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    doNothing().when(studentDAO).deleteById(any(Long.class));
+    doNothing().when(studentDAO).delete(any(StudentEntity.class));
     studentService.deleteStudentById(1L);
   }
 

@@ -1,11 +1,11 @@
 package com.demo.studentmanagement.service;
 
-import com.demo.studentmanagement.repo.StudentRepo;
 import com.demo.studentmanagement.exception.StudentNotFoundException;
 import com.demo.studentmanagement.helper.StudentMapper;
 import com.demo.studentmanagement.model.StudentEntity;
 import com.demo.studentmanagement.model.StudentRequest;
 import com.demo.studentmanagement.model.StudentServiceResponse;
+import com.demo.studentmanagement.repo.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +20,17 @@ public class StudentServiceImpl implements StudentService {
 
   @Override
   public StudentServiceResponse getStudentDetails(Long studentId) {
-    Optional<StudentEntity> student = studentDAO.findById(studentId);
-    StudentServiceResponse studentServiceResponse = null;
-    if (student.isPresent()) {
-      studentServiceResponse = studentMapper.mapStudentDetails(student.get());
-    } else {
-      throw new StudentNotFoundException("StudentId " + studentId + " Not Found");
-    }
-
-    return studentServiceResponse;
+    return studentDAO
+        .findById(studentId)
+        .map(
+            studentEntity -> {
+              return new StudentServiceResponse(
+                  studentEntity.getFirstName(),
+                  studentEntity.getLastName(),
+                  studentEntity.getEmail(),
+                  studentEntity.getStandard());
+            })
+        .orElseThrow(() -> new StudentNotFoundException("StudentId " + studentId + " Not Found"));
   }
 
   @Override
@@ -45,13 +47,10 @@ public class StudentServiceImpl implements StudentService {
 
   @Override
   public void deleteStudentById(Long studentId) {
-    Optional<StudentEntity> student = studentDAO.findById(studentId);
-
-    if (student.isPresent()) {
-      studentDAO.deleteById(studentId);
-    } else {
-      throw new StudentNotFoundException("StudentId " + studentId + " Not Found");
-    }
+     studentDAO.findById(studentId).map(studentEntity -> {
+       studentDAO.delete(studentEntity);
+       return studentEntity;
+    }).orElseThrow(()->new StudentNotFoundException("StudentId " + studentId + " Not Found"));
   }
 
   private void studentSaveOrUpdate(StudentRequest studentRequest, StudentEntity studentEntity) {
