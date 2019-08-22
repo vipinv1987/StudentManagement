@@ -1,8 +1,9 @@
 package com.demo.studentmanagement;
 
+import com.demo.studentmanagement.model.Standard;
+import com.demo.studentmanagement.model.StudentDTO;
 import com.demo.studentmanagement.repo.StudentRepo;
-import com.demo.studentmanagement.model.StudentEntity;
-import com.demo.studentmanagement.model.StudentRequest;
+import com.demo.studentmanagement.model.Student;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,15 +27,21 @@ public class StudentmanagementAppIntegrationTest {
 
   @LocalServerPort private int port;
 
-  @MockBean private StudentRepo studentDAO;
+  @MockBean private StudentRepo studentRepo;
 
-  private Optional<StudentEntity> student;
+  private Optional<Student> student;
 
-  private StudentEntity studentEntity;
+  private Student studentEntity;
 
   private TestRestTemplate restTemplate;
 
   private HttpHeaders headers;
+
+  private HttpEntity<String> httpEntity;
+
+  private ResponseEntity<String> response;
+
+  private HttpEntity<StudentDTO> studentHttpEntity;
 
   @Before
   public void init() {
@@ -43,44 +50,74 @@ public class StudentmanagementAppIntegrationTest {
   }
 
   @Test
-  public void testStudentDetails() throws Exception {
-    when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-    ResponseEntity<String> response =
+  public void testGet() throws Exception {
+    GivenGetById();
+    whenGetByID();
+    thenCheckStatus();
+  }
+
+  private void whenGetByID() {
+    response =
         restTemplate.exchange(
-            createURLWithPort("/students/1"), HttpMethod.GET, entity, String.class);
-    Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            createURLWithPort("/students/1"), HttpMethod.GET, httpEntity, String.class);
+  }
+
+  private void GivenGetById() {
+    when(studentRepo.findById(1L)).thenReturn(createStudentEnity());
+    httpEntity = new HttpEntity<String>(null, headers);
   }
 
   @Test
-  public void testCreateStudent() throws Exception {
-    when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    when(studentDAO.save(any(StudentEntity.class))).thenReturn(updateStudentEntity());
-    HttpEntity<StudentRequest> entity =
-        new HttpEntity<StudentRequest>(createStudentRequest(), headers);
-    ResponseEntity<String> response =
-        restTemplate.exchange(
-            createURLWithPort("/students/create"), HttpMethod.POST, entity, String.class);
+  public void testCreate() throws Exception {
+    givenCreate();
+    whenCreate();
+    thenCheckStatus();
+  }
+
+  private void thenCheckStatus() {
     Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 
-  @Test
-  public void testDeleteStudentById() throws Exception {
-    when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    doNothing().when(studentDAO).delete(any(StudentEntity.class));
-    HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-    ResponseEntity<String> response =
+  private void whenCreate() {
+    response =
         restTemplate.exchange(
-            createURLWithPort("/students/1"), HttpMethod.DELETE, entity, String.class);
-    Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            createURLWithPort("/students/create"),
+            HttpMethod.POST,
+            studentHttpEntity,
+            String.class);
+  }
+
+  private void givenCreate() {
+    when(studentRepo.findById(1L)).thenReturn(createStudentEnity());
+    when(studentRepo.save(any(Student.class))).thenReturn(updateStudentEntity());
+    studentHttpEntity = new HttpEntity<StudentDTO>(createStudentRequest(), headers);
+  }
+
+  @Test
+  public void testDeleteById() throws Exception {
+    givenDeleteById();
+    whenDeleteById();
+    thenCheckStatus();
+  }
+
+  private void whenDeleteById() {
+    response =
+        restTemplate.exchange(
+            createURLWithPort("/students/1"), HttpMethod.DELETE, httpEntity, String.class);
+  }
+
+  private void givenDeleteById() {
+    when(studentRepo.findById(1L)).thenReturn(createStudentEnity());
+    doNothing().when(studentRepo).delete(any(Student.class));
+    httpEntity = new HttpEntity<String>(null, headers);
   }
 
   private String createURLWithPort(String uri) {
     return "http://localhost:" + port + uri;
   }
 
-  private Optional<StudentEntity> createStudentEnity() {
-    studentEntity = new StudentEntity();
+  private Optional<Student> createStudentEnity() {
+    studentEntity = new Student();
     studentEntity.setId(1L);
     studentEntity.setFirstName("vinu");
     studentEntity.setLastName("V");
@@ -89,8 +126,8 @@ public class StudentmanagementAppIntegrationTest {
     return student;
   }
 
-  private StudentEntity updateStudentEntity() {
-    studentEntity = new StudentEntity();
+  private Student updateStudentEntity() {
+    studentEntity = new Student();
     studentEntity.setId(1L);
     studentEntity.setFirstName("vinu");
     studentEntity.setLastName("V");
@@ -98,7 +135,12 @@ public class StudentmanagementAppIntegrationTest {
     return studentEntity;
   }
 
-  private StudentRequest createStudentRequest() {
-    return new StudentRequest(1L, "vinu", "V", "Vinu@gmail.com", 6);
+  private StudentDTO createStudentRequest() {
+    StudentDTO studentDTO = new StudentDTO();
+    studentDTO.setFirstName("Vinu");
+    studentDTO.setLastName("V");
+    studentDTO.setEmailAdress("test@gmail.com");
+    studentDTO.setStandard(Standard.ONE);
+    return studentDTO;
   }
 }
