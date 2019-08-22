@@ -24,14 +24,15 @@ public class StudentTransformer {
       };
 
   public static Function<StudentDTO, Student> mapDtoToStudent =
-          new Function<StudentDTO, Student>() {
-            public Student apply(StudentDTO t) {
-              Student student = new Student();
-              student.setFirstName(t.getFirstName());
-              student.setLastName(t.getLastName());
-              student.setEmail(t.getEmailAdress());
-              student.setStandard(t.getStandard());
-              return student;
-            }
-          };
+      new Function<StudentDTO, Student>() {
+        public Student apply(StudentDTO t) {
+          Student student = new Student();
+          student.setId(t.getStudentId());
+          student.setFirstName(t.getFirstName());
+          student.setLastName(t.getLastName());
+          student.setEmail(t.getEmailAdress());
+          student.setStandard(t.getStandard());
+          return student;
+        }
+      };
 }
