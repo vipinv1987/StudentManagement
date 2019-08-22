@@ -1,20 +1,14 @@
 package com.demo.studentmanagement.web;
 
 import com.demo.studentmanagement.model.StudentDTO;
-import com.demo.studentmanagement.model.StudentRequest;
-import com.demo.studentmanagement.model.StudentServiceResponse;
-import com.demo.studentmanagement.model.StudentWebResponse;
 import com.demo.studentmanagement.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * To handle student creation,updation,deletion and selction
- */
+import javax.validation.Valid;
+
+/** To handle student creation,updation,deletion and selction */
 @RestController
 @RequestMapping("/students")
 public class StudentController {
@@ -46,7 +40,7 @@ public class StudentController {
    * @return
    */
   @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
-  public StudentDTO create(@RequestBody StudentDTO studentDTO) {
+  public StudentDTO create(@Valid @RequestBody StudentDTO studentDTO) {
     return studentService.createStudent(studentDTO);
   }
 

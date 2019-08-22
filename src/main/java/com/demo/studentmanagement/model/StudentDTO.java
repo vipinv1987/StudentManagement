@@ -1,13 +1,19 @@
 package com.demo.studentmanagement.model;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 public class StudentDTO {
 
   private Long studentId;
 
+  @NotEmpty(message = "Please provide the first name")
   private String firstName;
 
+  @NotEmpty(message = "Please provide the last name")
   private String lastName;
 
+  @Pattern(regexp = "^(.+)@(.+)$", message = "Please provide valid Email address")
   private String emailAdress;
 
   private Standard standard;
