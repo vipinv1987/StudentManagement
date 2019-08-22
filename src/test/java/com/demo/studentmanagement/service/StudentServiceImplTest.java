@@ -1,56 +1,82 @@
 package com.demo.studentmanagement.service;
 
+import com.demo.studentmanagement.model.Standard;
+import com.demo.studentmanagement.model.Student;
+import com.demo.studentmanagement.model.StudentDTO;
 import com.demo.studentmanagement.repo.StudentRepo;
-import com.demo.studentmanagement.helper.StudentMapper;
-import com.demo.studentmanagement.model.StudentEntity;
-import com.demo.studentmanagement.model.StudentRequest;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StudentServiceImplTest {
 
-  @Mock
-  private StudentRepo studentDAO;
+  @Mock private StudentRepo studentRepo;
 
-  @InjectMocks
-  private StudentServiceImpl studentService;
+  @InjectMocks private StudentServiceImpl studentService;
+  private Optional<Student> student;
 
-  @InjectMocks
-  private StudentMapper studentMapper;
-
-  private Optional<StudentEntity> student;
-
-  private StudentEntity studentEntity;
-
-  @Before
-  public void init() {
-    ReflectionTestUtils.setField(studentService, "studentMapper", studentMapper);
-  }
+  private Student studentEntity;
 
   @Test
   public void getStudentDetailsTest() {
-    when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    studentService.getStudentDetails(1L);
+    givenStudentService();
+    whenGetById();
+  }
+
+  private void givenStudentService() {
+    studentService = new StudentServiceImpl(studentRepo);
+  }
+
+  private void whenGetById() {
+    when(studentRepo.findById(1L)).thenReturn(createStudent());
+    studentService.getById(1L);
   }
 
   @Test
   public void createStudentTest() {
-    when(studentDAO.save(any(StudentEntity.class))).thenReturn(updateStudentEntity());
-    studentService.createStudent(createUpdateStudentRequest());
+    givenStudentService();
+    whenCreate();
   }
 
-  public void whenForCreateOrUpdateTest(Optional<StudentEntity> studentEnity) {
+  private void whenCreate() {
+    when(studentRepo.save(any(Student.class))).thenReturn(updateStudentEntity());
+    studentService.createStudent(createRequest());
+  }
+
+  @Test
+  public void updateStudentTest() {
+    givenStudentService();
+    whenUpdateById();
+  }
+
+  private void whenUpdateById() {
+    when(studentRepo.findById(any(Long.class))).thenReturn(createStudent());
+    when(studentRepo.save(studentEntity)).thenReturn(updateStudentEntity());
+    studentService.updateById(updateRequest());
+  }
+
+  @Test
+  public void deleteByIdTest() {
+    whenDeleteById();
+    studentService.deleteById(1L);
+  }
+
+  private void whenDeleteById() {
+    when(studentRepo.findById(anyLong())).thenReturn(createStudent());
+    doNothing().when(studentRepo).delete(any(Student.class));
+  }
+  /*
+  public void whenForCreateOrUpdateTest(Optional<Student> studentEnity) {
     when(studentDAO.findById(1L)).thenReturn(studentEnity);
     when(studentDAO.save(studentEntity)).thenReturn(updateStudentEntity());
   }
@@ -65,26 +91,42 @@ public class StudentServiceImplTest {
   @Test
   public void deleteStudentByIdTest() {
     when(studentDAO.findById(1L)).thenReturn(createStudentEnity());
-    doNothing().when(studentDAO).delete(any(StudentEntity.class));
+    doNothing().when(studentDAO).delete(any(Student.class));
     studentService.deleteStudentById(1L);
-  }
+  }*/
 
-  private Optional<StudentEntity> createStudentEnity() {
-    studentEntity = new StudentEntity();
+  private Optional<Student> createStudent() {
+    studentEntity = new Student();
     studentEntity.setId(1L);
     studentEntity.setFirstName("vinu");
     studentEntity.setLastName("V");
     studentEntity.setEmail("vinu@gmail.com");
+    studentEntity.setStandard(Standard.ONE);
     student = Optional.of(studentEntity);
     return student;
   }
 
-  private StudentRequest createUpdateStudentRequest() {
-    return new StudentRequest(1L, "Vinu", "V", "vinu@gmail.com", 6);
+  private StudentDTO createRequest() {
+    StudentDTO studentDTO = new StudentDTO();
+    studentDTO.setFirstName("Vinu");
+    studentDTO.setLastName("V");
+    studentDTO.setEmailAdress("test@gmail.com");
+    studentDTO.setStandard(Standard.ONE);
+    return studentDTO;
   }
 
-  private StudentEntity updateStudentEntity() {
-    studentEntity = new StudentEntity();
+  private StudentDTO updateRequest() {
+    StudentDTO studentDTO = new StudentDTO();
+    studentDTO.setStudentId(1L);
+    studentDTO.setFirstName("Vinu");
+    studentDTO.setLastName("V");
+    studentDTO.setEmailAdress("test@gmail.com");
+    studentDTO.setStandard(Standard.ONE);
+    return studentDTO;
+  }
+
+  private Student updateStudentEntity() {
+    studentEntity = new Student();
     studentEntity.setId(1L);
     studentEntity.setFirstName("vinu");
     studentEntity.setLastName("V");
